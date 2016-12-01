@@ -1,12 +1,9 @@
 
-NAME=vaultctl
-AUTHOR=UKHomeOffice
+NAME=vault-sync
+AUTHOR=Orange
 REGISTRY=docker.io
 HARDWARE=$(shell uname -m)
-GODEPS=godep
-VERSION=$(shell awk '/Version =/ { print $$3 }' cmd/*/doc.go | sed 's/"//g')
-DEPS=$(shell go list -f '{{range .TestImports}}{{.}} {{end}}' ./...)
-PACKAGES=$(shell go list ./...)
+VERSION=$(shell git describe --tags --always')
 VETARGS?=-asmdecl -atomic -bool -buildtags -copylocks -methods -nilfunc -printf -rangeloops -shift -structtags -unsafeptr
 
 .PHONY: test authors changelog build docker static release lint cover vet
@@ -44,10 +41,6 @@ clean:
 authors:
 	@echo "--> Updating the AUTHORS"
 	git log --format='%aN <%aE>' | sort -u > AUTHORS
-
-deps:
-	@echo "--> Installing build dependencies"
-	@go get -d -v ./... $(DEPS)
 
 vet:
 	@echo "--> Running go vet $(VETARGS) ."

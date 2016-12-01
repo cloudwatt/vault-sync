@@ -1,6 +1,6 @@
 FROM alpine:3.3
-MAINTAINER Rohith <gambol99@gmail.com>
+MAINTAINER Félix Cantournet <felix.cantournet@gmail.com>
 
-ADD bin/vaultctl /usr/bin/vaultctl
+ADD bin/vault-sync /usr/bin/vault-sync
 
-CMD [ "/usr/bin/vaultctl" ]
+CMD [ "/usr/bin/vault-sync" ]

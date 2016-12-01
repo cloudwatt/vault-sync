@@ -1,0 +1,104 @@
+
+auths:
+- path: userpass
+  type: userpass
+- path: extra/userpass
+  type: userpass
+- path: github
+  type: github
+  attributes:
+  - uri: config
+    organization: UKHomeOffice
+
+users:
+- userpass:
+    username: rohithj
+    password: password1
+  policies:
+    - common
+    - platform_tls
+- userpass:
+    username: alex
+    password: password1
+  policies:
+    - root
+- userpass:
+    username: rohith
+    password: password1
+  policies:
+    - common
+    - platform_tls
+    - platform
+- usertoken:
+    id: dskdjksjdksjdksjdksjdksd
+    display-name: password1
+    ttl: 1h
+  policies:
+    - common
+    - platform_tls
+
+backends:
+- type: transit
+  path: platform/encode
+  description: A transit backend used to encrypt configuration files
+  attributes:
+  - uri: keys/default
+    oneshot: true
+- type: generic
+  path: platform/secrets
+  description: platform secrets
+- path: platform/platform_tls
+  description: platform tls
+  type: generic
+- path: platform/pki
+  type: pki
+  description: Platform PKI backend
+  attributes:
+  - uri: root/generate/internal
+    common_name: example.com
+    ttl: 3h
+    oneshot: true
+  - uri: roles/example-dot-com
+    allowed_domains: example.com
+    allow_subdomains: true
+    max_ttl: 1h
+# one of the annoying things about the mysql backend is it attempts to connect to the db when
+# adding the config/connection config??
+#- path: platform/db
+#  type: mysql
+#  description: Platform Database
+#  config:
+#  - uri: config/connection
+#    value: root:root@tcp(127.0.0.1:3306)/
+#    oneshot: true
+#  - uri: roles/readonly
+#    sql: CREATE USER '{{name}}'@'%' IDENTIFIED BY '{{password}}';GRANT SELECT ON *.* TO '{{name}}'@'%'
+- path: platform/aws
+  type: aws
+  description: Platform AWS backend
+  attributes:
+  - uri: config/root
+    access_key: TEST
+    secret_key: TEST
+    region: us-east-1
+- path: mattermost/secrets
+  description: Mattermost Secrets
+  type: generic
+
+secrets:
+  - path: platform/secrets/platform_tls
+    values:
+      hello: world
+      rohith: yes
+  - path: platform/secrets/se1
+    values:
+      hello: world
+      rohith: yes
+  - path: platform/secrets/se2
+    values:
+      hello: world
+      rohith: yes
+  - path: platform/secrets/se3
+    values:
+      hello: world
+      rohith: yes

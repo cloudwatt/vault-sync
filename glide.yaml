@@ -1,0 +1,17 @@
+package: github.com/fcantournet/vault-sync
+import:
+- package: github.com/Sirupsen/logrus
+  version: ~0.11.0
+- package: github.com/codegangsta/cli
+  version: ^1.19.1
+- package: github.com/fatih/color
+- package: github.com/hashicorp/vault
+  version: ~0.6.2
+  subpackages:
+  - api
+- package: gopkg.in/yaml.v2
+testImport:
+- package: github.com/stretchr/testify
+  version: ^1.1.4
+  subpackages:
+  - assert

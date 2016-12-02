@@ -23,9 +23,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/UKHomeOffice/vaultctl/pkg/api"
-	"github.com/UKHomeOffice/vaultctl/pkg/utils"
-	"github.com/UKHomeOffice/vaultctl/pkg/vault"
+	"github.com/fcantournet/vault-sync/pkg/api"
+	"github.com/fcantournet/vault-sync/pkg/utils"
+	"github.com/fcantournet/vault-sync/pkg/vault"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/codegangsta/cli"

@@ -19,7 +19,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/UKHomeOffice/vaultctl/pkg/utils"
+	"github.com/fcantournet/vault-sync/pkg/utils"
 )
 
 var (

@@ -15,7 +15,7 @@ limitations under the License.
 
 package main
 
-import "github.com/UKHomeOffice/vaultctl/pkg/api"
+import "github.com/fcantournet/vault-sync/pkg/api"
 
 const (
 	// Author is the author of the program

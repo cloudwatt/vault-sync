@@ -20,12 +20,6 @@ import (
 
 	"github.com/fcantournet/vault-sync/pkg/api"
 	"github.com/fcantournet/vault-sync/pkg/utils"
-	"github.com/fcantournet/vault-sync/pkg/vault"
-
-	log "github.com/Sirupsen/logrus"
-	"github.com/codegangsta/cli"
-	"k8s.io/kubernetes/pkg/client/unversioned"
-	"k8s.io/kubernetes/pkg/client/unversioned/clientcmd"
 )
 
 // parseConfigFiles parses the configuration files and extracts the resources
@@ -46,78 +40,4 @@ func parseConfigFiles(files []string) (*resources, error) {
 	}
 
 	return r, nil
-}
-
-// getKubeClient retrieves a kube client
-func getKubeClient(cx *cli.Context) (*unversioned.Client, error) {
-	filename := cx.String("kubeconfig")
-	context := cx.String("kube-context")
-	hostname := cx.String("kube-server")
-	token := cx.String("kube-token")
-
-	config := new(unversioned.Config)
-
-	// step: are we using a kubeconfig?
-	if filename != "" {
-		log.Infof("loading the kubeconfig from: %s, context: %s, server: %s", filename, context, hostname)
-
-		kube, err := clientcmd.LoadFromFile(filename)
-		if err != nil {
-			return nil, err
-		}
-
-		if config, err = clientcmd.NewDefaultClientConfig(*kube,
-			&clientcmd.ConfigOverrides{
-				CurrentContext: context,
-			},
-		).ClientConfig(); err != nil {
-			return nil, err
-		}
-
-		if hostname != "" {
-			config.Host = hostname
-		}
-	} else {
-		config.BearerToken = token
-		config.Host = hostname
-		config.Insecure = true
-	}
-
-	log.Infof("using the kube api: %s", config.Host)
-
-	// step: create the client
-	client, err := unversioned.New(config)
-	if err != nil {
-		return nil, err
-	}
-
-	return client, nil
-}
-
-// getVaultClient retrieves a vault client for use
-func getVaultClient(cx *cli.Context) (*vault.Client, error) {
-	host := cx.GlobalString("vault-addr")
-	username := cx.GlobalString("vault-username")
-	password := cx.GlobalString("vault-password")
-	token := cx.GlobalString("vault-token")
-	creds := cx.GlobalString("credentials")
-
-	// step: validate we have the requirements
-	if creds != "" {
-		if !utils.IsFile(creds) {
-			printUsage("the vault credentials file does not exist")
-		}
-	} else if token == "" {
-		if username == "" || password == "" {
-			return nil, fmt.Errorf("you need to specify a username and password if no token")
-		}
-	}
-
-	// step: create a vault client
-	client, err := vault.New(host, username, password, creds, token)
-	if err != nil {
-		return nil, err
-	}
-
-	return client, nil
 }

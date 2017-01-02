@@ -7,6 +7,7 @@ import (
 
 	"github.com/go-ldap/ldap"
 	"github.com/hashicorp/vault/helper/mfa"
+	"github.com/hashicorp/vault/helper/strutil"
 	"github.com/hashicorp/vault/logical"
 	"github.com/hashicorp/vault/logical/framework"
 )
@@ -100,6 +101,9 @@ func (b *backend) Login(req *logical.Request, username string, password string) 
 		return nil, logical.ErrorResponse("invalid connection returned from LDAP dial"), nil
 	}
 
+	// Clean connection
+	defer c.Close()
+
 	bindDN, err := b.getBindDN(cfg, c, username)
 	if err != nil {
 		return nil, logical.ErrorResponse(err.Error()), nil
@@ -107,6 +111,10 @@ func (b *backend) Login(req *logical.Request, username string, password string) 
 
 	if b.Logger().IsDebug() {
 		b.Logger().Debug("auth/ldap: BindDN fetched", "username", username, "binddn", bindDN)
+	}
+
+	if cfg.DenyNullBind && len(password) == 0 {
+		return nil, logical.ErrorResponse("password cannot be of zero length when passwordless binds are being denied"), nil
 	}
 
 	// Try to bind as the login user. This is where the actual authentication takes place.
@@ -157,6 +165,9 @@ func (b *backend) Login(req *logical.Request, username string, password string) 
 			policies = append(policies, group.Policies...)
 		}
 	}
+
+	// Policies from each group may overlap
+	policies = strutil.RemoveDuplicates(policies)
 
 	if len(policies) == 0 {
 		errStr := "user is not a member of any authorized group"

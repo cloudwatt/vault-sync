@@ -100,6 +100,17 @@ Default: cn`,
 				Default:     "tls12",
 				Description: "Minimum TLS version to use. Accepted values are 'tls10', 'tls11' or 'tls12'. Defaults to 'tls12'",
 			},
+
+			"tls_max_version": &framework.FieldSchema{
+				Type:        framework.TypeString,
+				Default:     "tls12",
+				Description: "Maximum TLS version to use. Accepted values are 'tls10', 'tls11' or 'tls12'. Defaults to 'tls12'",
+			},
+			"deny_null_bind": &framework.FieldSchema{
+				Type:        framework.TypeBool,
+				Default:     true,
+				Description: "Denies an unauthenticated LDAP bind request if the user's password is empty; defaults to true",
+			},
 		},
 
 		Callbacks: map[logical.Operation]framework.OperationFunc{
@@ -225,6 +236,19 @@ func (b *backend) newConfigEntry(d *framework.FieldData) (*ConfigEntry, error) {
 		return nil, fmt.Errorf("invalid 'tls_min_version'")
 	}
 
+	cfg.TLSMaxVersion = d.Get("tls_max_version").(string)
+	if cfg.TLSMaxVersion == "" {
+		return nil, fmt.Errorf("failed to get 'tls_max_version' value")
+	}
+
+	_, ok = tlsutil.TLSLookup[cfg.TLSMaxVersion]
+	if !ok {
+		return nil, fmt.Errorf("invalid 'tls_max_version'")
+	}
+	if cfg.TLSMaxVersion < cfg.TLSMinVersion {
+		return nil, fmt.Errorf("'tls_max_version' must be greater than or equal to 'tls_min_version'")
+	}
+
 	startTLS := d.Get("starttls").(bool)
 	if startTLS {
 		cfg.StartTLS = startTLS
@@ -236,6 +260,10 @@ func (b *backend) newConfigEntry(d *framework.FieldData) (*ConfigEntry, error) {
 	bindPass := d.Get("bindpass").(string)
 	if bindPass != "" {
 		cfg.BindPassword = bindPass
+	}
+	denyNullBind := d.Get("deny_null_bind").(bool)
+	if denyNullBind {
+		cfg.DenyNullBind = denyNullBind
 	}
 	discoverDN := d.Get("discoverdn").(bool)
 	if discoverDN {
@@ -278,8 +306,10 @@ type ConfigEntry struct {
 	StartTLS      bool   `json:"starttls" structs:"starttls" mapstructure:"starttls"`
 	BindDN        string `json:"binddn" structs:"binddn" mapstructure:"binddn"`
 	BindPassword  string `json:"bindpass" structs:"bindpass" mapstructure:"bindpass"`
+	DenyNullBind  bool   `json:"deny_null_bind" structs:"deny_null_bind" mapstructure:"deny_null_bind"`
 	DiscoverDN    bool   `json:"discoverdn" structs:"discoverdn" mapstructure:"discoverdn"`
 	TLSMinVersion string `json:"tls_min_version" structs:"tls_min_version" mapstructure:"tls_min_version"`
+	TLSMaxVersion string `json:"tls_max_version" structs:"tls_max_version" mapstructure:"tls_max_version"`
 }
 
 func (c *ConfigEntry) GetTLSConfig(host string) (*tls.Config, error) {
@@ -293,6 +323,14 @@ func (c *ConfigEntry) GetTLSConfig(host string) (*tls.Config, error) {
 			return nil, fmt.Errorf("invalid 'tls_min_version' in config")
 		}
 		tlsConfig.MinVersion = tlsMinVersion
+	}
+
+	if c.TLSMaxVersion != "" {
+		tlsMaxVersion, ok := tlsutil.TLSLookup[c.TLSMaxVersion]
+		if !ok {
+			return nil, fmt.Errorf("invalid 'tls_max_version' in config")
+		}
+		tlsConfig.MaxVersion = tlsMaxVersion
 	}
 
 	if c.InsecureTLS {
@@ -328,6 +366,13 @@ func (c *ConfigEntry) DialLDAP() (*ldap.Conn, error) {
 			port = "389"
 		}
 		conn, err = ldap.Dial("tcp", host+":"+port)
+		if err != nil {
+			break
+		}
+		if conn == nil {
+			err = fmt.Errorf("empty connection after dialing")
+			break
+		}
 		if c.StartTLS {
 			tlsConfig, err = c.GetTLSConfig(host)
 			if err != nil {

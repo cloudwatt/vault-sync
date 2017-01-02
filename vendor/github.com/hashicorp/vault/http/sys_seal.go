@@ -15,7 +15,7 @@ import (
 
 func handleSysSeal(core *vault.Core) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		req, statusCode, err := buildLogicalRequest(w, r)
+		req, statusCode, err := buildLogicalRequest(core, w, r)
 		if err != nil || statusCode != 0 {
 			respondError(w, statusCode, err)
 			return
@@ -30,8 +30,13 @@ func handleSysSeal(core *vault.Core) http.Handler {
 
 		// Seal with the token above
 		if err := core.SealWithRequest(req); err != nil {
-			respondError(w, http.StatusInternalServerError, err)
-			return
+			if errwrap.Contains(err, logical.ErrPermissionDenied.Error()) {
+				respondError(w, http.StatusForbidden, err)
+				return
+			} else {
+				respondError(w, http.StatusInternalServerError, err)
+				return
+			}
 		}
 
 		respondOk(w, nil)
@@ -40,7 +45,7 @@ func handleSysSeal(core *vault.Core) http.Handler {
 
 func handleSysStepDown(core *vault.Core) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		req, statusCode, err := buildLogicalRequest(w, r)
+		req, statusCode, err := buildLogicalRequest(core, w, r)
 		if err != nil || statusCode != 0 {
 			respondError(w, statusCode, err)
 			return
@@ -75,7 +80,7 @@ func handleSysUnseal(core *vault.Core) http.Handler {
 
 		// Parse the request
 		var req UnsealRequest
-		if err := parseRequest(r, &req); err != nil {
+		if err := parseRequest(r, w, &req); err != nil {
 			respondError(w, http.StatusBadRequest, err)
 			return
 		}

@@ -55,8 +55,9 @@ sending a SIGHUP to the server process. These are denoted below.
    inner syntax is below.
 
 * `cache_size` (optional) - If set, the size of the read cache used
-  by the physical storage subsystem will be set to this value, in bytes.
-  Defaults to 1048576 (1MB).
+  by the physical storage subsystem will be set to this value. The
+  value is in number of entries so the total cache size is dependent
+  on the entries being stored. Defaults to 32k entries.
 
 * `disable_cache` (optional) - A boolean. If true, this will disable all caches
   within Vault, including the read cache used by the physical storage
@@ -76,6 +77,10 @@ sending a SIGHUP to the server process. These are denoted below.
 * `max_lease_ttl` (optional) - Configures the maximum possible
   lease duration for tokens and secrets. This is a string value using a suffix,
   e.g. "768h". Default value is 32 days.
+
+* `ui` (optional, Vault Enterprise only) - If set `true`, enables the built-in
+  web-based UI. Once enabled, the UI will be available to browsers at the
+  standard Vault address.
 
 In production it is a risk to run Vault on systems where `mlock` is
 unavailable or the setting has been disabled via the `disable_mlock`.
@@ -199,10 +204,16 @@ is within the object itself.
   Force activation of metrics which already exist and are not currently active. If check management is enabled, the default behavior is to add new metrics as they are encountered. If the metric already exists in the check, it will **not** be activated. This setting overrides that behavior. By default, this is set to "false".
 
 * `circonus_check_instance_id`
-  Serves to uniquely identify the metrics coming from this *instance*.  It can be used to maintain metric continuity with transient or ephemeral instances as they move around within an infrastructure. By default, this is set to hostname:application name (e.g. "host123:consul").
+  Serves to uniquely identify the metrics coming from this *instance*.  It can be used to maintain metric continuity with transient or ephemeral instances as they move around within an infrastructure. By default, this is set to hostname:application name (e.g. "host123:vault").
 
 * `circonus_check_search_tag`
-  A special tag which, when coupled with the instance id, helps to narrow down the search results when neither a Submission URL or Check ID is provided. By default, this is set to service:app (e.g. "service:consul").
+  A special tag which, when coupled with the instance id, helps to narrow down the search results when neither a Submission URL or Check ID is provided. By default, this is set to service:app (e.g. "service:vault").
+
+* `circonus_check_display_name`
+  Specifies a name to give a check when it is created. This name is displayed in the Circonus UI Checks list.
+
+* `circonus_check_tags`
+  Comma separated list of additional tags to add to a check when it is created.
 
 * `circonus_broker_id`
   The ID of a specific Circonus Broker to use when creating a new check. The numeric portion of `broker._cid` field in a Broker API object. If metric management is enabled and neither a Submission URL nor Check ID is provided, an attempt will be made to search for an existing check using Instance ID and Search Tag. If one is not found, a new HTTPTRAP check will be created. By default, this is not used and a random Enterprise Broker is selected, or, the default Circonus Public Broker.
@@ -238,6 +249,9 @@ to help you, but may refer you to the backend author.
     This backend optionally supports HA. This is a community-supported backend.
 
   * `s3` - Store data within an S3 bucket [S3](https://aws.amazon.com/s3/).
+    This backend does not support HA. This is a community-supported backend.
+
+  * `gcs` - Store data within a [Google Cloud Storage](https://cloud.google.com/storage/) bucket.
     This backend does not support HA. This is a community-supported backend.
 
   * `azure` - Store data in an Azure Storage container [Azure](https://azure.microsoft.com/en-us/services/storage/).
@@ -604,6 +618,17 @@ will cause Vault to attempt to retrieve credentials from the metadata service.
 You are responsible for ensuring your instance is launched with the appropriate
 profile enabled. Vault will handle renewing profile credentials as they rotate.
 
+#### Backend Reference: Google Cloud Storage (Community-Supported)
+
+For Google Cloud Storage, the following options are supported:
+
+  * `bucket` (required) - The name of the Google Cloud Storage bucket to use. It must be provided, but it can also be sourced from the `GOOGLE_STORAGE_BUCKET` environment variable.
+
+  * `credentials_file` - (required) The path to a GCP [service account](https://cloud.google.com/compute/docs/access/service-accounts) private key file in [JSON format](https://cloud.google.com/storage/docs/authentication#generating-a-private-key). It must be provided, but it can also be sourced from the `GOOGLE_APPLICATION_CREDENTIALS` environment variable.
+
+  * `max_parallel` (optional) - The maximum number of concurrent requests to Google Cloud Storage.
+    Defaults to `"128"`.
+
 #### Backend Reference: Azure (Community-Supported)
 
   * `accountName` (required) - The Azure Storage account name
@@ -618,7 +643,7 @@ The current implementation is limited to a maximum of 4 MBytes per blob/file.
 
 #### Backend Reference: Swift (Community-Supported)
 
-For Swift, the following options are supported:
+For Swift, the following options are valid; only v1.0 auth endpoints are supported:
 
   * `container` (required) - The name of the Swift container to use. It must be provided, but it can also be sourced from the `OS_CONTAINER` environment variable.
 

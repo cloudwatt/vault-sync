@@ -1,10 +1,10 @@
-hash: b1201732158ab67d90fc3212e8cc94fb314e106cf0cc5f39866322032ddba643
-updated: 2016-12-02T15:04:20.744504841+01:00
+hash: 98cb1d12e8a9aba6eb31fd0c1046f5c599f5ff4b0c87bd18d026cb836c427425
+updated: 2017-01-02T17:09:31.958850876+01:00
 imports:
 - name: github.com/codegangsta/cli
   version: 0bdeddeeb0f650497d603c4ad7b20cfe685682f6
 - name: github.com/fatih/color
-  version: bf82308e8c8546dc2b945157173eb8a959ae9505
+  version: 9ab0325f4904aac7c2c60db3cff3b35f415575c7
 - name: github.com/fatih/structs
   version: dc3312cb1a4513a366c4c9e622ad55c32df12ed3
 - name: github.com/hashicorp/errwrap
@@ -27,7 +27,7 @@ imports:
   - json/scanner
   - json/token
 - name: github.com/hashicorp/vault
-  version: 22619b6786724c8eca5340a63395bf3058e1e3f7
+  version: f4adc7fa960ed8e828f94bc6785bcdbae8d1b263
   subpackages:
   - api
   - helper/compressutil

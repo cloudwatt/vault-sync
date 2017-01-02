@@ -1,5 +1,14 @@
 
 auths:
+- path: token
+  type: token
+  attributes:
+  - uri: roles/applications
+    allowed_policies: ""
+    disallowed_policies: "admin"
+    orphan: true
+    period: 1h
+    path_suffix: jan2017
 - path: userpass
   type: userpass
 - path: extra/userpass
@@ -8,7 +17,27 @@ auths:
   type: github
   attributes:
   - uri: config
-    organization: UKHomeOffice
+    organization: Cloudwatt
+- path: ldap
+  type: ldap
+  attributes:
+  - uri: config
+    binddn: "uid=vault,ou=users,dc=infra,dc=cloudwatt,dc=net"
+    bindpass: "youplaboum"
+    certificate: ""
+    deny_null_bind: true
+    discoverdn: false
+    groupattr: "cn"
+    groupdn: "ou=applications,dc=infra,dc=cloudwatt,dc=net"
+    groupfilter: "(uniqueMember={{.UserDN}})"
+    insecure_tls: true
+    starttls: false
+    tls_max_version: "tls12"
+    tls_min_version: "tls12"
+    upndomain: ""
+    url: "ldaps://ldap.int4.aub.cloudwatt.net:636"
+    userattr: "uid"
+    userdn: "ou=users,dc=infra,dc=cloudwatt,dc=net"
 
 users:
 - userpass:

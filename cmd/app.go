@@ -34,7 +34,6 @@ func newVaultCtl() *cli.App {
 	app.Commands = []cli.Command{
 		newSyncCommand(),
 		newTransitCommand(),
-		newKubeCommand(),
 	}
 
 	return app

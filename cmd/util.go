@@ -20,6 +20,9 @@ import (
 
 	"github.com/fcantournet/vault-sync/pkg/api"
 	"github.com/fcantournet/vault-sync/pkg/utils"
+	"github.com/fcantournet/vault-sync/pkg/vault"
+
+	"github.com/codegangsta/cli"
 )
 
 // parseConfigFiles parses the configuration files and extracts the resources
@@ -40,4 +43,32 @@ func parseConfigFiles(files []string) (*resources, error) {
 	}
 
 	return r, nil
+}
+
+// getVaultClient retrieves a vault client for use
+func getVaultClient(cx *cli.Context) (*vault.Client, error) {
+	host := cx.GlobalString("vault-addr")
+	username := cx.GlobalString("vault-username")
+	password := cx.GlobalString("vault-password")
+	token := cx.GlobalString("vault-token")
+	creds := cx.GlobalString("credentials")
+
+	// step: validate we have the requirements
+	if creds != "" {
+		if !utils.IsFile(creds) {
+			printUsage("the vault credentials file does not exist")
+		}
+	} else if token == "" {
+		if username == "" || password == "" {
+			return nil, fmt.Errorf("you need to specify a username and password if no token")
+		}
+	}
+
+	// step: create a vault client
+	client, err := vault.New(host, username, password, creds, token)
+	if err != nil {
+		return nil, err
+	}
+
+	return client, nil
 }

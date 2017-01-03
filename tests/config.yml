@@ -20,6 +20,8 @@ auths:
     organization: Cloudwatt
 - path: ldap
   type: ldap
+  default_lease_ttl: "15m"
+  max_lease_ttl: "60m"
   attributes:
   - uri: config
     binddn: "uid=vault,ou=users,dc=infra,dc=cloudwatt,dc=net"
@@ -60,7 +62,7 @@ users:
     - platform
 - usertoken:
     id: dskdjksjdksjdksjdksjdksd
-    display-name: password1
+    display_name: password1
     ttl: 1h
   policies:
     - common

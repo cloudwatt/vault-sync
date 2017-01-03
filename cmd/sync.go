@@ -160,6 +160,12 @@ func (r *syncCommand) applyAuths(auths []*api.Auth) error {
 			log.Infof("[auth: %s] already create, skipping to configuration", x.Path)
 		}
 
+		// step: tune the mount
+		r.client.Client().Sys().TuneMount(fmt.Sprintf("auth/%s/tune", x.Path), v.MountConfigInput{
+			DefaultLeaseTTL: x.GetDefaultTTL(),
+			MaxLeaseTTL:     x.GetMaxTTL(),
+		})
+
 		// step: config the backend
 		for _, c := range x.Attrs {
 			// step: get the full path
@@ -469,7 +475,7 @@ func (r *syncCommand) getCommand() cli.Command {
 				Usage: "the path to a directory containing one of more policy files",
 			},
 			cli.BoolFlag{
-				Name:	     "sync-full",
+				Name:        "sync-full",
 				Usage:       "a full sync will also check the resources are still reference and attempt to delete",
 				Destination: &r.fullsync,
 			},

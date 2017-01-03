@@ -20,6 +20,24 @@ import (
 	"strings"
 )
 
+// GetDefaultTTL returns the default ttl
+func (a Auth) GetDefaultTTL() string {
+	if a.DefaultLeaseTTL <= 0 {
+		return "system"
+	}
+
+	return a.DefaultLeaseTTL.String()
+}
+
+// GetMaxTTL returns the max ttl
+func (a Auth) GetMaxTTL() string {
+	if a.MaxLeaseTTL <= 0 {
+		return "system"
+	}
+
+	return a.MaxLeaseTTL.String()
+}
+
 // String returns a string representation of the backend
 func (r Backend) String() string {
 	return fmt.Sprintf("path: %s, type: %s", r.Path, r.Type)

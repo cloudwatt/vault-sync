@@ -40,6 +40,10 @@ type Auth struct {
 	Type string `yaml:"type" json:"type" hcl:"type"`
 	// Description is the a description for the backend
 	Description string `yaml:"description" json:"description" hcl:"description"`
+	// DefaultLeaseTTL is the default lease of the backend
+	DefaultLeaseTTL time.Duration `yaml:"default_lease_ttl,omitempty" json:"default_lease_ttl,omitempty" hcl:"default_lease_ttl,omitempty"`
+	// MaxLeaseTTL is the max ttl
+	MaxLeaseTTL time.Duration `yaml:"max_lease_ttl,omitempty" json:"max_lease_ttl,omitempty" hcl:"max_lease_ttl,omitempty"`
 	// Attributes is a map of configurations for the backend
 	Attrs []*Attributes `yaml:"attributes" json:"attributes" hcl:"attributes"`
 }
@@ -53,9 +57,9 @@ type Backend struct {
 	// Type is the type of backend
 	Type string `yaml:"type" json:"type" hcl:"type"`
 	// DefaultLeaseTTL is the default lease of the backend
-	DefaultLeaseTTL time.Duration `yaml:"default-lease-ttl" json:"default-lease-ttl" hcl:"default-lease-ttl"`
+	DefaultLeaseTTL time.Duration `yaml:"default_lease_ttl" json:"default_lease_ttl" hcl:"default_lease_ttl"`
 	// MaxLeaseTTL is the max ttl
-	MaxLeaseTTL time.Duration `yaml:"max-lease-ttl" json:"max-lease-ttl" hcl:"max-lease-ttl"`
+	MaxLeaseTTL time.Duration `yaml:"max_lease_ttl" json:"max_lease_ttl" hcl:"max_lease_ttl"`
 	// Attrs is the configuration of the mount point
 	Attrs []*Attributes `yaml:"attributes" json:"attributes" hcl:"attributes"`
 }
@@ -97,7 +101,7 @@ type UserToken struct {
 	// TTL is the time duration of the token
 	TTL time.Duration `yaml:"ttl" json:"ttp" hcl:"ttl"`
 	// DisplayName is a generic name for the token
-	DisplayName string `yaml:"display-name" json:"display-name" hcl:"display-name"`
+	DisplayName string `yaml:"display_name" json:"display_name" hcl:"display_name"`
 	// MaxUses is the max number of times the token can be used
-	MaxUses int `yaml:"max-uses" json:"max-uses" hcl:"max-uses"`
+	MaxUses int `yaml:"max_uses" json:"max_uses" hcl:"max_uses"`
 }

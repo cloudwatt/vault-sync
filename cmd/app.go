@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package main
+package cmd
 
 import (
 	"fmt"
@@ -23,7 +23,7 @@ import (
 	"github.com/codegangsta/cli"
 )
 
-func newVaultCtl() *cli.App {
+func NewVaultCtl() *cli.App {
 	// step: create and return the application
 	app := cli.NewApp()
 	app.Usage = "is a utility for provisioning a hashicorp's vault service"

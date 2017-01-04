@@ -30,12 +30,12 @@ func TestUserIsValid(t *testing.T) {
 			User: &User{},
 		},
 		{
-			User: &User{UserPass: &UserCredentials{
+			User: &User{UserPass: &UserPass{
 				Username: "test",
 			}},
 		},
 		{
-			User: &User{UserPass: &UserCredentials{
+			User: &User{UserPass: &UserPass{
 				Username: "test",
 				Password: "password",
 			}},
@@ -43,7 +43,7 @@ func TestUserIsValid(t *testing.T) {
 		},
 		{
 			User: &User{
-				UserPass: &UserCredentials{Username: "test", Password: "pass"},
+				UserPass: &UserPass{Username: "test", Password: "pass"},
 				Policies: []string{"pol"},
 			},
 			Ok: true,

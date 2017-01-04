@@ -15,9 +15,13 @@ limitations under the License.
 
 package main
 
-import "os"
+import (
+	"os"
+
+	"github.com/fcantournet/vault-sync/cmd"
+)
 
 func main() {
-	app := newVaultCtl()
+	app := cmd.NewVaultCtl()
 	app.Run(os.Args)
 }

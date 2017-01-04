@@ -21,7 +21,11 @@ import (
 	"github.com/fcantournet/vault-sync/cmd"
 )
 
+// Version get dynamically set to git rev by ldflags at build time
+var Version = "dev"
+
 func main() {
 	app := cmd.NewVaultCtl()
+	app.Version = Version
 	app.Run(os.Args)
 }

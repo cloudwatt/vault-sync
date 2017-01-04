@@ -29,7 +29,6 @@ func NewVaultCtl() *cli.App {
 	app.Usage = "is a utility for provisioning a hashicorp's vault service"
 	app.Author = Author
 	app.Email = Email
-	app.Version = Version
 	app.Flags = getGlobalOptions()
 	app.Commands = []cli.Command{
 		newSyncCommand(),

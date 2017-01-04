@@ -1,49 +1,57 @@
-### **Vaultctl**
+### **Vault-sync**
 
 ---
-Vaultctl is a command line utilty for provisioning a Hashicorp's [Vault](https://www.vaultproject.io) from configuration files. Essentially it was written so we could source control our users, policies, backends and secrets, synchronize the vault against them and rebuild on-demand if required.
- 
+Disclaimer : this started as a fork of the [vaultctl](https://github.com/UKHomeOffice/vaultctl)
+
+Vault-sync is a command line utilty for provisioning a Hashicorp's [Vault](https://www.vaultproject.io) from configuration files. Essentially it was written so we could source control our users, policies, backends and secrets, synchronize the vault against them and rebuild on-demand if required.
+
 ##### **Build**
 ---
- 
- There is a Makefile in the root directory, so a simply ***make*** will build the project. Alternatively you can run the build inside a docker via ***make docker-build***
- 
+
+ There is a Makefile in the root directory, so a simply `make` will build the project. Alternatively you can run the build inside a docker via `make docker-build`
+
 ##### **Usage**
 ---
- 
+
+An example for most supported configurations can be found in the `tests` directory.
+
+To sync the directory you can run for instance :
+`vault-sync -A https://vault.mydomain:8200 -t $VAULT_TOKEN sync --sync-full -c tests/config.yaml -p tests/policies`
+
+This will sync all config from `tests/config.yaml` and all policies in `tests/policies` that are in format `*.hcl`
+
 ```shell
-[jest@starfury vaultctl]$ bin/vaultctl --help
 NAME:
-   vaultctl - is a utility for provisioning a hashicorp's vault service
+   vault-sync - is a utility for provisioning a hashicorp's vault service
 
 USAGE:
-   vaultctl [global options] command [command options] [arguments...]
-   
+   vault-sync [global options] command [command options] [arguments...]
+
 VERSION:
-   v0.0.1
-   
-AUTHOR(S):
-   Rohith <gambol99@gmail.com> 
-   
+   v0.1.0-alpha1
+
+AUTHOR:
+   Félix Cantournet <felix.cantournet@gmail.com>
+
 COMMANDS:
-   synchronize, sync	synchonrize the users, policies, secrets and backends
-   transit, tr, trans	Encrypts / decrypts files using the Vault transit backend
-   help, h		Shows a list of commands or help for one command
-   
+     synchronize, sync   synchonrize the users, policies, secrets and backends
+     transit, tr, trans  Encrypts / decrypts files using the Vault transit backend
+     help, h             Shows a list of commands or help for one command
+
 GLOBAL OPTIONS:
-   -A, --vault-addr "http://127.0.0.1:8200"	the url address of the vault service [$VAULT_ADDR]
-   -u, --vault-username 			the vault username to use to authenticate to vault service [$VAULT_USERNAME]
-   -p, --vault-password 			the vault password to use to authenticate to vault service [$VAULT_PASSWORD]
-   -c, --credentials 				the path to a file (json|yaml) containing the username and password for userpass authenticaion [$VAULT_CRENDENTIALS]
-   --verbose					switch on verbose logging for debug purposed
-   --kube-populate				whether or not to populate the vault crendentials into the namespaces
-   --help, -h					show help
-   --version, -v				print the version
-``` 
+   -A value, --vault-addr value      the url address of the vault service (default: "http://127.0.0.1:8200") [$VAULT_ADDR]
+   -u value, --vault-username value  the vault username to use to authenticate to vault service [$VAULT_USERNAME]
+   -p value, --vault-password value  the vault password to use to authenticate to vault service [$VAULT_PASSWORD]
+   -t value, --vault-token value     a vault token used to authenticate to vault service [$VAULT_TOKEN]
+   -c value, --credentials value     the path to a file (json|yaml) containing the username and password for userpass authenticaion [$VAULT_CRENDENTIALS]
+   --verbose                         switch on verbose logging for debug purposed
+   --help, -h                        show help
+   --version, -v                     print the version
+```
 
 ##### **Configuration**
 
-The configuration files for vaultctl can be written in json or yml format *(note, it check the file extension to determine the format)*. You can specify multiple configuration files and or multiple directories containing config files. 
+The configuration files for vault-sync can be written in json or yml format *(note, it check the file extension to determine the format)*. You can specify multiple configuration files and or multiple directories containing config files.
 
 ###### - **Authentication**
 
@@ -105,7 +113,7 @@ backends:
   - uri: roles/example-dot-com
     allowed_domains: example.com
     allow_subdomains: true
-    max_ttl: 1h 
+    max_ttl: 1h
 # one of the annoying things about the mysql backend is it attempts to connect to the db when
 # adding the config/connection config??
 - path: platform/db
@@ -136,26 +144,29 @@ secrets:
 ###### - **Example Output**
 
 ```shell
-[jest@starfury vaultctl]$ bin/vaultctl -u admin -p password  sync -p tests/policies -c platform.yml
-INFO[0000] -> synchronizing the vault policies, 3 files 
-INFO[0001] [policy: common.hcl] successfully applied the policy, filename: tests/policies/common.hcl 
-INFO[0001] [policy: platform.hcl] successfully applied the policy, filename: tests/policies/platform.hcl 
-INFO[0001] [policy: platform_tls.hcl] successfully applied the policy, filename: tests/policies/platform_tls.hcl 
-INFO[0001] -> synchronizing the vault users, users: 1 
-INFO[0001] [user: rohithj] ensuring user, policies: root 
-INFO[0001] -> synchronizing the backends, backend: 2 
-INFO[0001] [backend: platform/encode]: already exist, moving to configuration 
-INFO[0001] [backend:platform/encode/keys/default] skipping the config, as it's a oneshot setting 
-INFO[0001] [backend: platform/secrets]: already exist, moving to configuration 
-INFO[0001] -> synchronizing the secrets with vault, secrets: 0 
-INFO[0001] synchronization complete, time took: 1.733908869s 
+[jest@starfury vault-sync]$ bin/vault-sync -u admin -p password  sync -p tests/policies -c platform.yml
+INFO[0000] -> synchronizing the vault policies, 3 files
+INFO[0001] [policy: common.hcl] successfully applied the policy, filename: tests/policies/common.hcl
+INFO[0001] [policy: platform.hcl] successfully applied the policy, filename: tests/policies/platform.hcl
+INFO[0001] [policy: platform_tls.hcl] successfully applied the policy, filename: tests/policies/platform_tls.hcl
+INFO[0001] -> synchronizing the vault users, users: 1
+INFO[0001] [user: rohithj] ensuring user, policies: root
+INFO[0001] -> synchronizing the backends, backend: 2
+INFO[0001] [backend: platform/encode]: already exist, moving to configuration
+INFO[0001] [backend:platform/encode/keys/default] skipping the config, as it's a oneshot setting
+INFO[0001] [backend: platform/secrets]: already exist, moving to configuration
+INFO[0001] -> synchronizing the secrets with vault, secrets: 0
+INFO[0001] synchronization complete, time took: 1.733908869s
 ```
+
 
 #### **Transit Encryption**
 ---
-The sub-command 'transit' permits you to encrypt and decrypt the file contents using a [Vault transit](https://www.vaultproject.io/docs/secrets/transit/index.html) backend. The current use case being we hand off management to others to manage their our namespaces, secret, backends etc and behold a generic endpoint for encryption. 
+The sub-command 'transit' permits you to encrypt and decrypt the file contents using a [Vault transit](https://www.vaultproject.io/docs/secrets/transit/index.html) backend. The current use case being we hand off management to others to manage their our namespaces, secret, backends etc and behold a generic endpoint for encryption.
 
 ##### **TODO**
 ---
 
-- Need to finish off the Kubernetes intregetion to place the vault credentials in k8s secrets.
+- More tests
+- Keep up with Vault.
+- Documentation

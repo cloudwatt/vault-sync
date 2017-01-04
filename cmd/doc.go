@@ -17,13 +17,11 @@ package cmd
 
 import "github.com/fcantournet/vault-sync/pkg/api"
 
-const (
+var (
 	// Author is the author of the program
-	Author = "Rohith"
+	Author = "Félix Cantournet"
 	// Email is the email of the author
-	Email = "gambol99@gmail.com"
-	// Version is the version
-	Version = "v0.0.5"
+	Email = "felix.cantournet@gmail.com"
 )
 
 type resources struct {

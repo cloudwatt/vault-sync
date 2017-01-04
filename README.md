@@ -1,5 +1,8 @@
 ### **Vault-sync**
 
+[![Build Status](https://travis-ci.org/fcantournet/vault-sync.svg?branch=master)](https://travis-ci.org/fcantournet/vault-sync)
+[![Go Report Card](https://goreportcard.com/badge/github.com/fcantournet/vault-sync)](https://goreportcard.com/report/github.com/fcantournet/vault-sync)
+
 ---
 Disclaimer : this started as a fork of the [vaultctl](https://github.com/UKHomeOffice/vaultctl)
 
@@ -125,7 +128,7 @@ backends:
     oneshot: true
   - uri: roles/readonly
     sql: CREATE USER '{{name}}'@'%' IDENTIFIED BY '{{password}}';GRANT SELECT ON *.* TO '{{name}}'@'%'
-```    
+```
 
 ###### - **Secrets**
 
@@ -139,7 +142,7 @@ secrets:
     values:
       hello: world
       rohith: yes
-```      
+```
 
 ###### - **Example Output**
 

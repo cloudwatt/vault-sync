@@ -5,15 +5,14 @@ go: '1.7'
 install:
   - go get -v github.com/Masterminds/glide
   - go get -u gopkg.in/alecthomas/gometalinter.v1
-  - gometalinter.v1 --install
+  - gometalinter.v1 --install --vendored-linters
 
 script:
-  - go test $(glide novendor)
-  - gometalinter.v1 --deadline=5m --vendor
+  - gometalinter.v1 --deadline=5m --vendor --fast
 
 before_deploy:
   - go get github.com/mitchellh/gox
-  - gox -ldflags="-X main.Version=${TRAVIS_TAG}" -output="bin/{{.Dir}}_{{.OS}}_{{.Arch}}"
+  - gox -osarch="darwin/amd64 linux/amd64" -ldflags="-X main.Version=${TRAVIS_TAG}" -output="bin/{{.Dir}}_{{.OS}}_{{.Arch}}"
 
 deploy:
   provider: releases

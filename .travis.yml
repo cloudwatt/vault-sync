@@ -8,7 +8,7 @@ install:
   - gometalinter.v1 --install --vendored-linters
 
 script:
-  - gometalinter.v1 --deadline=5m --vendor --fast
+  - gometalinter.v1 --deadline=5m --vendor --fast --disable=gotype
 
 before_deploy:
   - go get github.com/mitchellh/gox

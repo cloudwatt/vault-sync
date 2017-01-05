@@ -1,11 +1,25 @@
-language: go
 sudo: false
+language: go
 go: '1.7'
+
+install:
+  - go get -v github.com/Masterminds/glide
+  - go get -u gopkg.in/alecthomas/gometalinter.v1
+  - gometalinter.v1 --install --vendored-linters
+
+script:
+  - gometalinter.v1 --deadline=5m --vendor --fast --disable=gotype
+
+before_deploy:
+  - go get github.com/mitchellh/gox
+  - gox -osarch="darwin/amd64 linux/amd64" -ldflags="-X main.Version=${TRAVIS_TAG}" -output="bin/{{.Dir}}_{{.OS}}_{{.Arch}}"
+
 deploy:
   provider: releases
   api_key:
     secure: ZY4tVQxNbFnfc0yyqrzkvpPQxg1M8Ok9zwinsDwo1RMsxQFkIjG+WWqOngkzxklUPk71/z4tgTwAppr0esz+hPyrMdGh+eMxqhnQ3Jo6ZRtlkvRK2scXgXKzOIB0EPssga79S8AtxUgmZUiMa7VGGAEGJRpkb//8kpUn/OhdqZ+UVCly9iuSR1NVfniyd5zocUZPKBZC0zyJBVPDC1QirNAphESpqDjEo8MYcoi5P9unHNAegZX+EnUmMHHI/pUtPEdSOD2ZRYmTtGMwROj0vc2ctH4p7/7EADVPNJCBAcd2bVpk8zLU91k3GRp68xs0Eac15AfZD4RmQT90DCJgfgfxvgkp+d3+t46kVdl3DSVzBGwu3tH/Dhl25/Xu3FsdhafHILVsymUOEKUybsXYdpFVnL7xT6EkT7icUtwtIXQsaHPxOcI7SHSYPZ9Re/W6a49H16D2f9egyqr8ElpoHSOhL2ccapudGxNX1jbEmwzg2jrScuoSCaGdXXsPYWxs2uVfnjPpslF8eK0Jlbl6FUMf8Ol0pDDUwwKkz1ndJFpJPh4xG7rYAfHoecB5hOwDNFSniqFcV9m3ldpjHjYJXwk1Bxs0k0TERP6msyuVGnowU1ZX/R3co2lyP/3YES++dt6Ftqt5aAXGjO6jRgoM24qlBSGJuUiI3sax1qMQdtY=
-  file: bin/vault-sync
+  file: bin/*
+  file_glob: true
   on:
     tags: true
     repo: fcantournet/vault-sync

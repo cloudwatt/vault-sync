@@ -1,7 +1,7 @@
 ### **Vault-sync**
 
-[![Build Status](https://travis-ci.org/fcantournet/vault-sync.svg?branch=master)](https://travis-ci.org/fcantournet/vault-sync)
-[![Go Report Card](https://goreportcard.com/badge/github.com/fcantournet/vault-sync)](https://goreportcard.com/report/github.com/fcantournet/vault-sync)
+[![Build Status](https://travis-ci.org/cloudwatt/vault-sync.svg?branch=master)](https://travis-ci.org/cloudwatt/vault-sync)
+[![Go Report Card](https://goreportcard.com/badge/github.com/cloudwatt/vault-sync)](https://goreportcard.com/report/github.com/cloudwatt/vault-sync)
 
 ---
 Disclaimer : this started as a fork of the [vaultctl](https://github.com/UKHomeOffice/vaultctl)

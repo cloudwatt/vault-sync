@@ -15,7 +15,7 @@ limitations under the License.
 
 package cmd
 
-import "github.com/fcantournet/vault-sync/pkg/api"
+import "github.com/cloudwatt/vault-sync/pkg/api"
 
 var (
 	// Author is the author of the program

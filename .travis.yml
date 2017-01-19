@@ -22,4 +22,4 @@ deploy:
   file_glob: true
   on:
     tags: true
-    repo: fcantournet/vault-sync
+    repo: cloudwatt/vault-sync

@@ -1,7 +1,7 @@
 NAME=vault-sync
 AUTHOR=Orange
 REGISTRY=docker.io
-IMPORT_PATH=github.com/fcantournet/vault-sync
+IMPORT_PATH=github.com/cloudwatt/vault-sync
 HARDWARE=$(shell uname -m)
 VERSION=$(shell git describe --tags --always)
 VETARGS?=-asmdecl -atomic -bool -buildtags -copylocks -methods -nilfunc -printf -rangeloops -shift -structtags -unsafeptr

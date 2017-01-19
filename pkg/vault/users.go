@@ -20,7 +20,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/fcantournet/vault-sync/pkg/api"
+	"github.com/cloudwatt/vault-sync/pkg/api"
 
 	log "github.com/Sirupsen/logrus"
 	"io/ioutil"

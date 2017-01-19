@@ -22,8 +22,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/fcantournet/vault-sync/pkg/utils"
-	"github.com/fcantournet/vault-sync/pkg/vault"
+	"github.com/cloudwatt/vault-sync/pkg/utils"
+	"github.com/cloudwatt/vault-sync/pkg/vault"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/codegangsta/cli"

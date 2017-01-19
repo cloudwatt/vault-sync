@@ -18,7 +18,7 @@ package main
 import (
 	"os"
 
-	"github.com/fcantournet/vault-sync/cmd"
+	"github.com/cloudwatt/vault-sync/cmd"
 )
 
 // Version get dynamically set to git rev by ldflags at build time

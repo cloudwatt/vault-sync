@@ -18,9 +18,9 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/fcantournet/vault-sync/pkg/api"
-	"github.com/fcantournet/vault-sync/pkg/utils"
-	"github.com/fcantournet/vault-sync/pkg/vault"
+	"github.com/cloudwatt/vault-sync/pkg/api"
+	"github.com/cloudwatt/vault-sync/pkg/utils"
+	"github.com/cloudwatt/vault-sync/pkg/vault"
 
 	"github.com/codegangsta/cli"
 )

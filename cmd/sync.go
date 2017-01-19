@@ -422,9 +422,23 @@ func (r *syncCommand) parseConfigFiles() error {
 func (r *syncCommand) validateAction(cx *cli.Context) error {
 	r.configFiles = cx.StringSlice("config")
 
+	var err error
+	if len(cx.StringSlice("policies")) == 0 { // no policy dirs specified
+		r.skipPolicies = true
+	} else {
+		// step: get a list of policy files from the directories
+		r.policyFiles, err = utils.FindFilesInDirectory(cx.StringSlice("policies"), r.policyExtension)
+		if err != nil {
+			return fmt.Errorf("cannot find policy files")
+		}
+	}
+
 	// step: check the skips
 	if r.skipBackends && r.skipPolicies && r.skipUsers {
 		return fmt.Errorf("you are skipping all the resources, what exactly are we syncing")
+	}
+	if r.skipAuths {
+		log.Infof("skipping the synchronization of auths")
 	}
 	if r.skipBackends {
 		log.Infof("skipping the synchronization of backends")
@@ -442,12 +456,6 @@ func (r *syncCommand) validateAction(cx *cli.Context) error {
 		return err
 	}
 	r.configFiles = append(r.configFiles, files...)
-
-	// step: get a list of policy files from the directories
-	r.policyFiles, err = utils.FindFilesInDirectory(cx.StringSlice("policies"), r.policyExtension)
-	if err != nil {
-		return err
-	}
 
 	return nil
 }
@@ -498,6 +506,11 @@ func (r *syncCommand) getCommand() cli.Command {
 				Name:        "skip-backends",
 				Usage:       "wheather or not to skip synchronizing the backends",
 				Destination: &r.skipBackends,
+			},
+			cli.BoolFlag{
+				Name:        "skip-auths",
+				Usage:       "wheather or not to skip synchronizing the backends",
+				Destination: &r.skipAuths,
 			},
 			cli.BoolFlag{
 				Name:        "skip-secrets",

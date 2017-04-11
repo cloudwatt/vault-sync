@@ -13,12 +13,12 @@ default: build
 build:
 	@echo "--> Compiling the project"
 	mkdir -p bin
-	go build -ldflags "-X main.Version=${VERSION}" -o bin/${NAME} .
+	go build -a -ldflags "-X main.Version=${VERSION}" -o bin/${NAME} .
 
 static:
 	@echo "--> Compiling the static binary"
 	mkdir -p bin
-	CGO_ENABLED=0 GOOS=linux go build -a -tags netgo -ldflags "-w -X main.Version=${VERSION}" -o bin/${NAME} .
+	CGO_ENABLED=0 GOOS=linux go build -a -tags netgo -ldflags "-X main.Version=${VERSION}" -o bin/${NAME} .
 
 docker-build:
 	@echo "--> Compiling the project"

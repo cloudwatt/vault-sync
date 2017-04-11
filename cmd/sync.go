@@ -504,12 +504,12 @@ func (r *syncCommand) getCommand() cli.Command {
 			},
 			cli.BoolFlag{
 				Name:        "skip-backends",
-				Usage:       "wheather or not to skip synchronizing the backends",
+				Usage:       "wheather or not to skip synchronizing the secrets backends",
 				Destination: &r.skipBackends,
 			},
 			cli.BoolFlag{
 				Name:        "skip-auths",
-				Usage:       "wheather or not to skip synchronizing the backends",
+				Usage:       "wheather or not to skip synchronizing the auths backends",
 				Destination: &r.skipAuths,
 			},
 			cli.BoolFlag{

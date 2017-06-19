@@ -219,7 +219,7 @@ func (r *syncCommand) applyPolicies(policies []string) error {
 	var list []string
 
 	for _, p := range policies {
-		name := strings.TrimRight(filepath.Base(p), filepath.Ext(filepath.Base(p)))
+		name := strings.TrimSuffix(filepath.Base(p), filepath.Ext(filepath.Base(p)))
 		list = append(list, name)
 
 		// step: read in the content
